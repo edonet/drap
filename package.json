@@ -1,0 +1,23 @@
+{
+    "name": "drap",
+    "version": "0.0.1",
+    "description": "A node package dependency management be based on yarn!",
+    "main": "index.js",
+    "lib": "src",
+    "bin": {
+        "drap": "./bin/drap.js"
+    },
+    "scripts": {
+        "drap": "node ./bin/drap.js",
+        "prepublish": "echo 0",
+        "publish": "echo 1"
+    },
+    "repository": "git@github.com:edonet/drap.git",
+    "author": "edoner <edonet@163.com>",
+    "license": "MIT",
+    "dependencies": {
+        "@arted/utils": "^0.0.102",
+        "yargs": "^12.0.1",
+        "yarn": "^1.7.0"
+    }
+}
