@@ -1,5 +1,5 @@
 # drap
-A node package dependency management be based on yarn!
+A easy way to craete node package for npm publish!
 
 ## Installation
 npm
@@ -14,12 +14,5 @@ $ yarn global add drap
 
 ## Usage
 ``` shell
-# 初始化包
-$ drap init
-
-# 添加依赖
-$ drap add react react-dom
-
-# 发布包
-$ drap publish
+$ drap lib build
 ```
