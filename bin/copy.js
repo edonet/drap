@@ -48,7 +48,7 @@ module.exports = async function copy(src, dist) {
         code = await fs.readFile(from);
 
         // 处理文件
-        if (name.endsWith('.js') && code.indexOf('import ') > -1) {
+        if (name.endsWith('.js') && /^(import|export) /m.test(code)) {
             await fs.writeFile(to, transform(code));
         } else {
             await fs.writeFile(to, code);
