@@ -1,6 +1,6 @@
 {
     "name": "drap",
-    "version": "0.0.101",
+    "version": "0.0.102",
     "description": "A node package dependency management be based on yarn!",
     "main": "index.js",
     "bin": {
