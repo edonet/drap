@@ -38,7 +38,9 @@ async function run() {
     // 判断是否存在目录
     if (stats && stats.isDirectory()) {
         let cwd = path.cwd(),
-            arr = ['package.json', 'LICENSE', 'README.md'];
+            pkg = await fs.resolve(path.cwd('package.json')),
+            libs = pkg.libs || pkg.drap || ['bin', 'scripts', 'assets', 'static', 'public'],
+            arr = [...libs, 'package.json', 'LICENSE', 'README.md'];
 
         // 打印信息
         block('Create package');
@@ -49,12 +51,18 @@ async function run() {
         // 拷贝项目配置
         await Promise.all(arr.map(async name => {
             let from = path.cwd(name),
-                to = path.cwd(dist, name);
+                to = path.cwd(dist, name),
+                stats = await fs.stat(from);
 
-            // 复制文件
-            if (await fs.stat(from)) {
-                await fs.writeFile(to, await fs.readFile(from));
+            // 判断是否存在文件
+            if (stats) {
+
+                // 打印信息
                 info('copy:', path.relative(cwd, from), '-->', path.relative(cwd, to));
+
+                // 拷贝文件
+                await fs.stat(to) && await fs.rmdir(to);
+                await fs.copy(from, to);
             }
         }));
 
