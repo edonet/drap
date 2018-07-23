@@ -29,9 +29,10 @@ const
  *****************************************
  */
 async function run() {
-    let argv = args.argv,
+    let argv = args.boolean('transform').argv,
         src = argv.src || argv._[0] || 'src',
         dist = argv.dist || argv._[1] || 'dist',
+        transform = argv.transform,
         stats = await fs.stat(src);
 
 
@@ -46,7 +47,7 @@ async function run() {
         block('Create package');
 
         // 拷贝项目文件
-        await copy(src, dist);
+        await copy(src, dist, transform);
 
         // 拷贝项目配置
         await Promise.all(arr.map(async name => {

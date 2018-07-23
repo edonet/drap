@@ -27,7 +27,7 @@ const
  * 复制文件
  *****************************************
  */
-module.exports = async function copy(src, dist) {
+module.exports = async function copy(src, dist, transformCode) {
     let arr = await fs.readdir(src);
 
     // 创建目录文件夹
@@ -47,12 +47,15 @@ module.exports = async function copy(src, dist) {
         // 获取原码
         code = await fs.readFile(from);
 
-        // 处理文件
-        if (name.endsWith('.js') && /^(import|export) /m.test(code)) {
-            await fs.writeFile(to, transform(code));
-        } else {
-            await fs.writeFile(to, code);
+        // 转码内容
+        if (name.endsWith('.js')) {
+            if (transformCode || /^(import|export) /m.test(code) || name.endsWith('.worker.js')) {
+                code = transform(code);
+            }
         }
+
+        // 写入文件
+        await fs.writeFile(to, code);
 
         // 打印信息
         info('copy:', relative(from), '-->', relative(to));
