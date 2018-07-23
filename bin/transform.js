@@ -21,7 +21,14 @@ const
         comments: false,
         presets: [
             resolve('babel-preset-env'),
-            resolve('babel-preset-stage-3')
+            resolve('babel-preset-stage-3'),
+            [
+                resolve('babel-preset-minify'),
+                {
+                    removeConsole: true,
+                    removeDebugger: true
+                }
+            ]
         ],
         plugins: [
             resolve('babel-plugin-transform-runtime')
