@@ -27,8 +27,8 @@ const copy = require('./copy');
  *****************************************
  */
 yargs
-    .boolean('transform')
-    .alias('t', 'transform');
+    .boolean('copy')
+    .alias('c', 'copy');
 
 
 /**

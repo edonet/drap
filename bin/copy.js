@@ -23,8 +23,9 @@ const stdout = require('ztil/stdout');
  * 复制文件夹
  *****************************************
  */
-module.exports = async function copy(src, dist, { transform } = {}) {
-    let arr = ['package.json', 'README.md', 'LICENSE'];
+module.exports = async function copy(src, dist, options) {
+    let arr = ['package.json', 'README.md', 'LICENSE'],
+        transform = !options.copy;
 
     // 格式化目录
     src = path.cwd(src);
