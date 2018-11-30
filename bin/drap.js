@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+
 /**
  *****************************************
  * Created by edonet@163.com
