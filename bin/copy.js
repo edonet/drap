@@ -1,7 +1,7 @@
 /**
  *****************************************
- * Created by lifx
- * Created on 2018-07-10 15:37:39
+ * Created by edonet@163.com
+ * Created on 2018-11-30 09:34:30
  *****************************************
  */
 'use strict';
@@ -12,14 +12,41 @@
  * 加载依赖
  *****************************************
  */
-const
-    fs = require('@arted/utils/fs'),
-    path = require('@arted/utils/path'),
-    { info } = require('@arted/utils/stdout'),
-    transform = require('./transform'),
-    relative = (
-        cwd => dir => path.relative(cwd, dir)
-    )(path.cwd());
+const babel = require('@airk/babel');
+const fs = require('ztil/fs');
+const path = require('ztil/path');
+const stdout = require('ztil/stdout');
+
+
+/**
+ *****************************************
+ * 复制文件夹
+ *****************************************
+ */
+module.exports = async function copy(src, dist, { transform } = {}) {
+    let arr = ['package.json', 'README.md', 'LICENSE'];
+
+    // 格式化目录
+    src = path.cwd(src);
+    dist = path.cwd(dist);
+
+    // 打印信息
+    stdout.block('Create package');
+
+    // 遍历目录
+    await Promise.all(
+        await fs.mapdir(src, async stats => {
+            if (!stats.isDirectory()) {
+                await copyFile(stats.path, path.resolve(dist, path.relative(src, stats.path)), transform);
+            }
+        })
+    );
+
+    // 拷贝项目配置
+    await Promise.all(
+        arr.map(name => copyFile(path.cwd(name), path.resolve(dist, name)))
+    );
+};
 
 
 /**
@@ -27,38 +54,19 @@ const
  * 复制文件
  *****************************************
  */
-module.exports = async function copy(src, dist, transformCode) {
-    let arr = await fs.readdir(src);
+async function copyFile(from, to, transform) {
+    let idx = path.cwd().length + 1,
+        result = await fs.readFile(from, 'utf8');
 
-    // 创建目录文件夹
-    await fs.stat(dist) || await fs.mkdir(dist);
+    // 编译内容
+    if (transform && from.endsWith('.js')) {
+        result = await babel.transform(result);
+        result = result.code;
+    }
 
-    // 拷贝文件
-    await Promise.all(arr.map(async name => {
-        let from = path.cwd(src, name),
-            to = path.cwd(dist, name),
-            code;
+    // 写入内容
+    await fs.writeFile(to, result);
 
-        // 处理目录
-        if ((await fs.stat(from)).isDirectory()) {
-            return name !== 'node_modules' && copy(from, to);
-        }
-
-        // 获取原码
-        code = await fs.readFile(from);
-
-        // 转码内容
-        if (name.endsWith('.js')) {
-            if (transformCode || /^(import|export) /m.test(code) || name.endsWith('.worker.js')) {
-                code = transform(code);
-            }
-        }
-
-        // 写入文件
-        await fs.writeFile(to, code);
-
-        // 打印信息
-        info('copy:', relative(from), '-->', relative(to));
-    }));
-
-};
+    // 打印信息
+    stdout.info('copy:', from.slice(idx), '->', to.slice(idx));
+}

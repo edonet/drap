@@ -1,6 +1,6 @@
 {
     "name": "drap",
-    "version": "0.0.102",
+    "version": "0.0.103",
     "description": "A node package dependency management be based on yarn!",
     "main": "index.js",
     "bin": {
@@ -13,12 +13,8 @@
     "author": "edoner <edonet@163.com>",
     "license": "MIT",
     "dependencies": {
-        "@arted/utils": "^0.0.103",
-        "babel-core": "^6.26.3",
-        "babel-plugin-transform-runtime": "^6.23.0",
-        "babel-preset-env": "^1.7.0",
-        "babel-preset-minify": "^0.4.3",
-        "babel-preset-stage-3": "^6.24.1",
-        "yargs": "^12.0.1"
+        "@airk/babel": "^0.0.1",
+        "yargs": "^12.0.5",
+        "ztil": "^0.0.107"
     }
 }

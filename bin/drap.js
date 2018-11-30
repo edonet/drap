@@ -1,10 +1,7 @@
-#!/usr/bin/env node
-
-
 /**
  *****************************************
- * Created by lifx
- * Created on 2018-07-09 17:31:39
+ * Created by edonet@163.com
+ * Created on 2018-11-30 09:21:26
  *****************************************
  */
 'use strict';
@@ -15,67 +12,47 @@
  * 加载依赖
  *****************************************
  */
-const
-    fs = require('@arted/utils/fs'),
-    path = require('@arted/utils/path'),
-    { info, block, error } = require('@arted/utils/stdout'),
-    args = require('yargs'),
-    copy = require('./copy');
+const yargs = require('yargs');
+const fs = require('ztil/fs');
+const copy = require('./copy');
 
 
 /**
  *****************************************
- * 定义命令
+ * 定义参数
+ *****************************************
+ */
+yargs
+    .boolean('transform')
+    .alias('t', 'transform');
+
+
+/**
+ *****************************************
+ * 定义脚本
  *****************************************
  */
 async function run() {
-    let argv = args.boolean('transform').argv,
-        src = argv.src || argv._[0] || 'src',
-        dist = argv.dist || argv._[1] || 'dist',
-        transform = argv.transform,
-        stats = await fs.stat(src);
+    let argv = yargs.argv,
+        src = argv.src || argv._[0] || 'lib',
+        dist = argv.dist || argv._[1] || 'release';
 
+    // 判断是否存在源文件
+    if (await fs.stat(src)) {
 
-    // 判断是否存在目录
-    if (stats && stats.isDirectory()) {
-        let cwd = path.cwd(),
-            pkg = await fs.resolve(path.cwd('package.json')),
-            libs = pkg.libs || pkg.drap || ['bin', 'scripts', 'assets', 'static', 'public'],
-            arr = [...libs, 'package.json', 'LICENSE', 'README.md'];
+        // 创建文件目录
+        await fs.rmdir(dist);
+        await fs.mkdir(dist);
 
-        // 打印信息
-        block('Create package');
-
-        // 拷贝项目文件
-        await copy(src, dist, transform);
-
-        // 拷贝项目配置
-        await Promise.all(arr.map(async name => {
-            let from = path.cwd(name),
-                to = path.cwd(dist, name),
-                stats = await fs.stat(from);
-
-            // 判断是否存在文件
-            if (stats) {
-
-                // 打印信息
-                info('copy:', path.relative(cwd, from), '-->', path.relative(cwd, to));
-
-                // 拷贝文件
-                await fs.stat(to) && await fs.rmdir(to);
-                await fs.copy(from, to);
-            }
-        }));
-
-        // 结束命令
-        info('');
+        // 复制文件
+        await copy(src, dist, argv);
     }
 }
 
 
 /**
  *****************************************
- * 执行命令
+ * 启动脚本
  *****************************************
  */
-run().catch(error);
+module.exports = run().catch(console.error);
