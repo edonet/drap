@@ -14,6 +14,7 @@
  */
 const yargs = require('yargs');
 const fs = require('ztil/fs');
+const pkg = require('../package.json');
 const copy = require('./copy');
 
 
@@ -34,8 +35,8 @@ yargs
  */
 async function run() {
     let argv = yargs.argv,
-        src = argv.src || argv._[0] || 'lib',
-        dist = argv.dist || argv._[1] || 'release';
+        src = argv.src || argv._[0] || pkg.library || 'lib',
+        dist = argv.dist || argv._[1] || 'dist';
 
     // 判断是否存在源文件
     if (await fs.stat(src)) {
