@@ -1,6 +1,6 @@
 {
     "name": "drap",
-    "version": "0.0.106",
+    "version": "0.0.107",
     "description": "A node package dependency management be based on yarn!",
     "main": "index.js",
     "bin": {
@@ -13,8 +13,8 @@
     "author": "edoner <edonet@163.com>",
     "license": "MIT",
     "dependencies": {
-        "@airk/babel": "^0.0.1",
-        "yargs": "^12.0.5",
-        "ztil": "^0.0.107"
+        "@airk/babel": "^0.0.102",
+        "airk": "^0.0.105",
+        "yargs": "^12.0.5"
     }
 }

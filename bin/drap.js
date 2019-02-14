@@ -16,7 +16,7 @@
  *****************************************
  */
 const yargs = require('yargs');
-const fs = require('ztil/fs');
+const fs = require('airk/fs');
 const pkg = require('../package.json');
 const copy = require('./copy');
 
@@ -28,7 +28,8 @@ const copy = require('./copy');
  */
 yargs
     .boolean('copy')
-    .alias('c', 'copy');
+    .alias('c', 'copy')
+    .alias('t', 'target');
 
 
 /**

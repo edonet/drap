@@ -13,9 +13,9 @@
  *****************************************
  */
 const babel = require('@airk/babel');
-const fs = require('ztil/fs');
-const path = require('ztil/path');
-const stdout = require('ztil/stdout');
+const fs = require('airk/fs');
+const path = require('airk/path');
+const stdout = require('airk/stdout');
 
 
 /**
@@ -24,8 +24,7 @@ const stdout = require('ztil/stdout');
  *****************************************
  */
 module.exports = async function copy(src, dist, options) {
-    let arr = ['package.json', 'README.md', 'LICENSE'],
-        transform = !options.copy;
+    let arr = ['package.json', 'README.md', 'LICENSE'];
 
     // 格式化目录
     src = path.cwd(src);
@@ -34,18 +33,23 @@ module.exports = async function copy(src, dist, options) {
     // 打印信息
     stdout.block('Create package');
 
+    // 移除文件
+    await fs.rmdir(dist);
+
     // 遍历目录
     await Promise.all(
         await fs.mapdir(src, async stats => {
-            if (!stats.isDirectory()) {
-                await copyFile(stats.path, path.resolve(dist, path.relative(src, stats.path)), transform);
+            if (stats.isDirectory()) {
+                await fs.mkdir(path.resolve(dist, path.relative(src, stats.path)));
+            } else {
+                await copyFile(stats.path, path.resolve(dist, path.relative(src, stats.path)), options);
             }
         })
     );
 
     // 拷贝项目配置
     await Promise.all(
-        arr.map(name => copyFile(path.cwd(name), path.resolve(dist, name)))
+        arr.map(name => copyFile(path.cwd(name), path.resolve(dist, name), { copy: true }))
     );
 };
 
@@ -55,13 +59,13 @@ module.exports = async function copy(src, dist, options) {
  * 复制文件
  *****************************************
  */
-async function copyFile(from, to, transform) {
+async function copyFile(from, to, { target, ...options }) {
     let idx = path.cwd().length + 1,
         result = await fs.readFile(from, 'utf8');
 
     // 编译内容
-    if (transform && from.endsWith('.js')) {
-        result = await babel.transform(result);
+    if (!options.copy && !path.basename(from).startsWith('__')) {
+        result = await babel.transform(result, { filename: from, comments: false, target });
         result = result.code;
     }
 
